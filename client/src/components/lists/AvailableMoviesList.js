@@ -17,9 +17,9 @@ const AvailableMoviesList = (props) => {
           stock={movie.stock}
           image={
             +movie.stock > 0 ? (
-              <img src={require("../icons/check.png")} className={classes.stockIcon} />
+              <img src={require("../icons/check.png")} className={classes.stockIcon} alt="checkIcon" />
             ) : (
-              <img src={require("../icons/cross.png")} className={classes.stockIcon} />
+              <img src={require("../icons/cross.png")} className={classes.stockIcon} alt="crossIcon"/>
             )
           }
           onRentMovie={props.onRentMovie}

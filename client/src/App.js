@@ -6,7 +6,6 @@ import LoginPage from './components/pages/LoginPage';
 import Layout from './components/layout/Layout';
 import ProfilePage from './components/pages/ProfilePage';
 import { PrivateRoute, IsLoggedIn } from './components/privateRoutes/PrivateRoutes';
-import { useEffect } from 'react';
 
 
 function App() {
