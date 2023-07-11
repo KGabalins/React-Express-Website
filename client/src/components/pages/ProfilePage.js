@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import classes from "./ProfilePage.module.css";
 import axios from "axios";
 
 const ProfilePage = () => {
-  const [email, setEmail] = useState(
-    JSON.parse(localStorage.getItem("currentUser")).email
-  );
   const[currUser, setCurrUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
   );

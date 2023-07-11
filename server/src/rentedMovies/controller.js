@@ -9,6 +9,14 @@ const getRenterMovies = (req, res) => {
   });
 };
 
+const getRentedMovie = (req, res) => {
+  const rentedMovieID = req.params.id
+  pool.query(queries.getRentedMovie, [rentedMovieID], (error, results) => {
+    if (error) throw error;
+    res.status(200).json(results.rows);
+  });
+}
+
 const removeRentedMovie = (req, res) => {
   const rentedMovieId = req.params.id;
   pool.query(queries.removeRentedMovie, [rentedMovieId], (error, results) => {
@@ -29,8 +37,22 @@ const rentMovie = (req, res) => {
   );
 };
 
+const editMovieTime = (req, res) => {
+  const rentedMovieId = req.params.id
+  const time = req.body.time
+  pool.query(queries.editMovieTime, [time, rentedMovieId], (error, results) => {
+    if (error) throw error;
+    res.status(200).send("Time changed!");
+  })
+
+  console.log(rentedMovieId)
+  console.log(time)
+};
+
 module.exports = {
   getRenterMovies,
+  getRentedMovie,
   removeRentedMovie,
   rentMovie,
+  editMovieTime,
 };

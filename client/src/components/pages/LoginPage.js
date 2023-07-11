@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import {useState } from "react";
 import LoginForm from "../forms/LoginForm";
 import RegisterForm from "../forms/RegisterForm";
 import { useNavigate } from "react-router-dom";
@@ -98,7 +98,7 @@ const LoginPage = () => {
         axios
           .post("/user", user)
           .then(() => {
-            delete user.password
+            delete user.password;
             setCurrentUser(user);
             localStorage.setItem("currentUser", JSON.stringify(user));
           })
@@ -109,15 +109,23 @@ const LoginPage = () => {
     }
   }
 
-  const initialRender = useRef(true);
+  // const initialRender = useRef(true);
 
-  useEffect(() => {
-    if (initialRender.current) {
-      initialRender.current = false;
-    } else {
+  // useEffect(() => {
+  //   if (initialRender.current) {
+  //     initialRender.current = false;
+  //   } else {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [currentUser]);
+  // useEffect(() => {
+  //   if (currentUser) {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [currentUser]);
+    if (currentUser) {
       navigate("/", { replace: true });
     }
-  }, [currentUser]);
 
   return (
     <>

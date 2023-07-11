@@ -11,11 +11,12 @@ const YourMoviesPage = () => {
 
   useEffect(() => {
     getRentedMovies();
-  }, [rentedMovies]);
+  });
 
   function getRentedMovies() {
-    axios.get(`/rentedMovies/${currUser.email}`)
-      .then((response) =>  setRentedMovies(response.data))
+    axios
+      .get(`/rentedMovies/${currUser.email}`)
+      .then((response) => setRentedMovies(response.data));
   }
 
   async function removeMovieHandler(removedMovieData) {
@@ -33,49 +34,21 @@ const YourMoviesPage = () => {
       });
   }
 
-  // function removeMovieHandler(removedMovieData) {
+  function changeTimeHandler(movie) {
+    const timeMethod = movie.substr(1, 1);
+    const rentedMovieId = movie.substr(0, 1);
 
-  //   currUser.rentedMovies.splice(removedMovieData.id, 1);
-  //   for (let i = 0; i < avlMovies.length; i++) {
-  //     if (removedMovieData.name === avlMovies[i].name) {
-  //       avlMovies[i].stock = +avlMovies[i].stock + 1;
-  //       break;
-  //     }
-  //   }
-  //   for (let i = 0; i < users.length; i++) {
-  //     if (currUser.email === users[i].email) {
-  //       users[i] = currUser;
-  //       break;
-  //     }
-  //   }
-
-  //   localStorage.setItem("currentUser", JSON.stringify(currUser));
-  //   setCurrentUser(currUser);
-
-  //   localStorage.setItem("availableMovies", JSON.stringify(avlMovies));
-  //   setAvailableMovies(avlMovies);
-  // }
-
-  // function changeTimeHandler(movie) {
-  //   const movieId = movie.substr(0,1)
-  //   const action = movie.substr(1)
-  //   let currTime = currUser.rentedMovies[movieId].time
-
-  //   if (action === "-") {
-  //     if(currTime !== 0) {
-  //       currTime -= 12
-  //     }
-  //   } else {
-  //     if(currTime !== 168) {
-  //       currTime += 12
-  //     }
-  //   }
-
-  //   currUser.rentedMovies[movieId].time = currTime
-
-  //   setCurrentUser(currUser)
-  //   localStorage.setItem("currentUser" ,JSON.stringify(currUser))
-  // }
+    axios.get(`/rentedMovies/id/${rentedMovieId}`).then(response => {
+      let currTime = Number(response.data[0].time)
+      if(currTime > 0 && timeMethod === "-") {
+        currTime -= 12
+        axios.put(`/rentedMovies/${rentedMovieId}`, {time: currTime});
+      } else if (currTime < 168 && timeMethod === "+") {
+        currTime += 12
+        axios.put(`/rentedMovies/${rentedMovieId}`, {time: currTime});
+      }
+    })
+  }
 
   return (
     <div className={classes.main}>
@@ -83,7 +56,7 @@ const YourMoviesPage = () => {
       <YourMoviesList
         movies={rentedMovies}
         onRemoveMovie={removeMovieHandler}
-        // onChangeTime={changeTimeHandler}
+        onChangeTime={changeTimeHandler}
       />
     </div>
   );
