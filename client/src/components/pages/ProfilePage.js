@@ -14,7 +14,7 @@ const ProfilePage = () => {
 
       axios.get(`/user/${enteredEmail}`).then(response => {
         if(response.data.Items.length === 0){
-          axios.put(`/user/${currUser.email}`, {"email": enteredEmail}).then(response => {
+          axios.post(`/user/${currUser.email}`, {"email": enteredEmail}).then(response => {
             setCurrUser(response.data.Items[0])
             localStorage.setItem("currentUser", JSON.stringify(response.data.Items[0]))
           })
@@ -22,28 +22,19 @@ const ProfilePage = () => {
           alert("User with this email already exists!")
         }
       })
-
-      // currUser.email = enteredEmail;
-
-      // setEmail(enteredEmail);
-
-      // localStorage.setItem("currentUser", JSON.stringify(currUser));
     } else {
       alert("This is not a valid email!");
     }
   };
 
   const changePassword = () => {
+
     const enteredPassword = prompt("Change password:") || "";
 
     if (enteredPassword.length > 7) {
-      currUser.password = enteredPassword;
-
-      localStorage.setItem("currentUser", JSON.stringify(currUser));
-
-      alert("Password was changed!");
+      axios.put(`/user/${currUser.email}`, {password: enteredPassword}).then(alert("Password changed succesfully!"))
     } else {
-      alert("Your password should be atleast 8 characters long!");
+      alert("Your password should be atleast 8 characters long!")
     }
   };
 

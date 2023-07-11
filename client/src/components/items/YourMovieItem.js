@@ -26,6 +26,7 @@ const YourMovieItem = (props) => {
   }
 
   function changeTimehandler(e) {
+    e.preventDefault()
     props.onChangeTime(e.target.id)
   }
 
@@ -36,7 +37,7 @@ const YourMovieItem = (props) => {
         <div ref={movieGenreRef}>{props.genre}</div>
         <div>
           <button type="button" id={props.id + "-"} className={classes.timeButton} onClick={changeTimehandler}>&lt;</button>
-          <input type="text" ref={movieTimeRef} value={props.time} className={classes.time} />
+          <input type="text" ref={movieTimeRef} value={props.time} className={classes.time} readOnly />
           <button type="button" id={props.id + "+"} className={classes.timeButton} onClick={changeTimehandler}>&gt;</button>
         </div>
         <div ref={moviePriceRef}>{props.price}</div>

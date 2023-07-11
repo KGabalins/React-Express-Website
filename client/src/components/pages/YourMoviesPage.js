@@ -35,17 +35,17 @@ const YourMoviesPage = () => {
   }
 
   function changeTimeHandler(movie) {
-    const timeMethod = movie.substr(1, 1);
-    const rentedMovieId = movie.substr(0, 1);
+    const timeMethod = movie.substr(movie.length - 1, movie.length);
+    const rentedMovieId = movie.substr(0, movie.length - 1);
 
     axios.get(`/rentedMovies/id/${rentedMovieId}`).then(response => {
       let currTime = Number(response.data[0].time)
       if(currTime > 0 && timeMethod === "-") {
         currTime -= 12
-        axios.put(`/rentedMovies/${rentedMovieId}`, {time: currTime});
+        axios.put(`/rentedMovies/${rentedMovieId}`, {time: currTime}).then(getRentedMovies());
       } else if (currTime < 168 && timeMethod === "+") {
         currTime += 12
-        axios.put(`/rentedMovies/${rentedMovieId}`, {time: currTime});
+        axios.put(`/rentedMovies/${rentedMovieId}`, {time: currTime}).then(getRentedMovies());
       }
     })
   }

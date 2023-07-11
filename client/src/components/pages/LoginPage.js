@@ -1,11 +1,11 @@
-import {useState } from "react";
+import {useEffect, useState } from "react";
 import LoginForm from "../forms/LoginForm";
 import RegisterForm from "../forms/RegisterForm";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const LoginPage = () => {
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
   function loginHandler({ email, password }, { emailError, passwordError }) {
@@ -109,23 +109,12 @@ const LoginPage = () => {
     }
   }
 
-  // const initialRender = useRef(true);
-
-  // useEffect(() => {
-  //   if (initialRender.current) {
-  //     initialRender.current = false;
-  //   } else {
-  //     navigate("/", { replace: true });
-  //   }
-  // }, [currentUser]);
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     navigate("/", { replace: true });
-  //   }
-  // }, [currentUser]);
-    if (currentUser) {
-      navigate("/", { replace: true });
+  useEffect(() => {
+    if(currentUser){
+      navigate("/", {replace : true})
     }
+  });
+
 
   return (
     <>

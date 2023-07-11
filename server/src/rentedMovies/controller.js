@@ -42,11 +42,8 @@ const editMovieTime = (req, res) => {
   const time = req.body.time
   pool.query(queries.editMovieTime, [time, rentedMovieId], (error, results) => {
     if (error) throw error;
-    res.status(200).send("Time changed!");
+    res.status(201).send("Time changed!");
   })
-
-  console.log(rentedMovieId)
-  console.log(time)
 };
 
 module.exports = {

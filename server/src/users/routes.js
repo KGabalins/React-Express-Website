@@ -6,7 +6,9 @@ router.get("/:email", controller.getUserData)
 
 router.post("/", controller.addUser)
 
-router.put("/:email", controller.updateUserEmail)
+router.post("/:email", controller.updateUserEmail)
+
+router.put("/:email", controller.updateUserPassword)
 
 router.delete("/:email", controller.deleteUser)
 

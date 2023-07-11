@@ -7,9 +7,9 @@ const AvailableMoviesList = (props) => {
   return (
     <>
       <MovieItemHeader />
-      {props.movies.map((movie) => (
+      {props.movies.map((movie, index) => (
         <MovieItem
-          key={movie.id}
+          key={index}
           id={movie.id}
           name={movie.name}
           genre={movie.genre}

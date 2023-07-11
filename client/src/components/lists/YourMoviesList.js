@@ -5,9 +5,9 @@ const YourMoviesList = (props) => {
   return (
     <>
       <YourMovieHeader />
-      {props.movies.map((movie) => (
+      {props.movies.map((movie, index) => (
         <YourMovieItem
-          key={movie.id}
+          key={index}
           id={movie.id}
           name={movie.name}
           genre={movie.genre}
