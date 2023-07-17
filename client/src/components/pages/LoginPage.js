@@ -1,40 +1,62 @@
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LoginForm from "../forms/LoginForm";
 import RegisterForm from "../forms/RegisterForm";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const LoginPage = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(
+    localStorage.getItem("currentUser")
+  );
+  const [loginStatus, setLoginStatus] = useState(false)
   const navigate = useNavigate();
 
-  function loginHandler({ email, password }, { emailError, passwordError }) {
-    passwordError.style.display = "none";
-
-    fetch(`/user/${email}`)
-      .then((response) => response.json())
-      .then((data) => checkUserData(data));
-
-    function checkUserData(userData) {
-      const user = userData.Items[0];
-      if (userData.Items.length === 0) {
-        emailError.style.display = "inline-block";
-      } else {
-        emailError.style.display = "none";
-
-        if (password === user.password) {
-          delete user.password;
-          setCurrentUser(user);
-          localStorage.setItem("currentUser", JSON.stringify(user));
-        } else {
-          passwordError.style.display = "inline-block";
-        }
-      }
+  // If currentUser state is trutsy then navigate to home screen
+  useEffect(() => {
+    if (loginStatus) {
+      navigate("/", { replace: true });
     }
+  });
+
+  // Login form submition handler
+  function loginHandler({ email, password }, error) {
+    axios
+      .post(`/user/login`, {email, password}).then(response => {
+        if(response.data.auth === false) {
+          error.style.display = "inline-block";
+          error.innerText = response.data.message
+          setLoginStatus(false)
+        } else {
+          localStorage.setItem("token", response.data.token)
+          setLoginStatus(true)
+        }
+      })
+      // .then((response) => checkUserData(response.data)).catch(error => console.log(error))
+
+    // Checks if user form was entered correctly
+    // function checkUserData(userData) {
+    //   const user = userData;
+    //   if (!userData) {
+    //     emailError.style.display = "inline-block";
+    //   } else {
+    //     emailError.style.display = "none";
+
+    //     if (password === user.password) {
+    //       delete user.password;
+    //       // Updates currentUser state
+    //       setCurrentUser(user);
+    //       // Creates localstorage item called currentUser with user data
+    //       localStorage.setItem("currentUser", JSON.stringify(user));
+    //     } else {
+    //       passwordError.style.display = "inline-block";
+    //     }
+    //   }
+    // }
   }
 
+  // Register form submition handler
   function registerHandler(
-    { name, surname, email, reemail, password, repassword, role },
+    { name, surname, email, reemail, password, repassword },
     {
       nameError,
       surnameError,
@@ -50,8 +72,9 @@ const LoginPage = () => {
       .then((response) => response.json())
       .then((data) => checkUserData(data));
 
+    // Checks if register form was entered correctly
     function checkUserData(userData) {
-      const user = { name, surname, email, password, role };
+      const user = { name, surname, email, password };
 
       if (userData.Items.length !== 0) {
         emailError.style.display = "inline-block";
@@ -95,6 +118,7 @@ const LoginPage = () => {
       }
 
       if (isValid) {
+        // Adds user to the database
         axios
           .post("/user", user)
           .then(() => {
@@ -108,13 +132,6 @@ const LoginPage = () => {
       }
     }
   }
-
-  useEffect(() => {
-    if(currentUser){
-      navigate("/", {replace : true})
-    }
-  });
-
 
   return (
     <>

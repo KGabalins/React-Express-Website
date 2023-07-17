@@ -1,13 +1,15 @@
-import { Navigate } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom"
 
 export function PrivateRoute(props){
-  const isLoggedIn = localStorage.getItem("currentUser")
+  const token = localStorage.getItem("token")
 
-  return isLoggedIn ? props.children : <Navigate to="/login" />
-}
+  console.log(token)
 
-export function IsLoggedIn(props) {
-  const isLoggedIn = localStorage.getItem("currentUser")
-
-  return isLoggedIn ? <Navigate to="/" /> : props.children
+  // axios.get("/user", {headers: {"x-access-token": token}}).then(response => {
+  //   console.log(response.data)
+  //   return response.data ? <Outlet/> : <Navigate to="/login" />
+  // })
+  
+  // return <Outlet />
+  // return isLoggedIn ? <Outlet /> : <Navigate to="/login" />
 }

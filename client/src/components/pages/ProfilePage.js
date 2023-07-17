@@ -3,7 +3,7 @@ import classes from "./ProfilePage.module.css";
 import axios from "axios";
 
 const ProfilePage = () => {
-  const[currUser, setCurrUser] = useState(
+  const [currUser, setCurrUser] = useState(
     JSON.parse(localStorage.getItem("currentUser"))
   );
 
@@ -11,30 +11,41 @@ const ProfilePage = () => {
     const enteredEmail = prompt("Change email:");
 
     if (validEmail(enteredEmail)) {
-
-      axios.get(`/user/${enteredEmail}`).then(response => {
-        if(response.data.Items.length === 0){
-          axios.post(`/user/${currUser.email}`, {"email": enteredEmail}).then(response => {
-            setCurrUser(response.data.Items[0])
-            localStorage.setItem("currentUser", JSON.stringify(response.data.Items[0]))
-          })
+      axios.get(`/user/perm/${enteredEmail}`).then((resp) => {
+        if (resp.data.Items.length === 0) {
+          axios.get(`/user/${enteredEmail}`).then((response) => {
+            if (response.data.Items.length === 0) {
+              axios
+                .post(`/user/${currUser.email}`, { email: enteredEmail })
+                .then((response) => {
+                  setCurrUser(response.data.Items[0]);
+                  localStorage.setItem(
+                    "currentUser",
+                    JSON.stringify(response.data.Items[0])
+                  );
+                });
+            } else {
+              alert("User with this email already exists!");
+            }
+          });
         } else {
-          alert("User with this email already exists!")
+          alert("User with this email already exists!");
         }
-      })
+      });
     } else {
       alert("This is not a valid email!");
     }
   };
 
   const changePassword = () => {
-
     const enteredPassword = prompt("Change password:") || "";
 
     if (enteredPassword.length > 7) {
-      axios.put(`/user/${currUser.email}`, {password: enteredPassword}).then(alert("Password changed succesfully!"))
+      axios
+        .put(`/user/${currUser.email}`, { password: enteredPassword })
+        .then(alert("Password changed succesfully!"));
     } else {
-      alert("Your password should be atleast 8 characters long!")
+      alert("Your password should be atleast 8 characters long!");
     }
   };
 

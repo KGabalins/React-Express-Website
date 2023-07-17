@@ -8,6 +8,7 @@ const MovieItem = (props) => {
   const moviePriceRef = useRef();
   const movieStockRef = useRef();
 
+  // Rent submit handler
   function rentMovieHandler(e) {
     e.preventDefault();
 

@@ -7,7 +7,7 @@ exports.up = function(knex) {
     table.increments("id").primary();
     table.string("name").notNullable();
     table.string("genre").notNullable();
-    table.string("time").notNullable();
+    table.integer("time").notNullable();
     table.string("price").notNullable();
     table.string("renter").notNullable();
   })

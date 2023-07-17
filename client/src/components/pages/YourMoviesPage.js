@@ -3,11 +3,14 @@ import axios from "axios";
 
 import classes from "./YourMoviesPage.module.css";
 import YourMoviesList from "../lists/YourMoviesList";
+import { useNavigate } from "react-router-dom";
 
 const YourMoviesPage = () => {
   const [rentedMovies, setRentedMovies] = useState([{}]);
 
   const currUser = JSON.parse(localStorage.getItem("currentUser")) || [];
+  const token = localStorage.getItem("token") || [];
+  const navigate = useNavigate();
 
   useEffect(() => {
     getRentedMovies();
@@ -15,8 +18,14 @@ const YourMoviesPage = () => {
 
   function getRentedMovies() {
     axios
-      .get(`/rentedMovies/${currUser.email}`)
-      .then((response) => setRentedMovies(response.data));
+      .get(`/rentedMovies/${currUser.email}`, {headers: {Authorization: token}})
+      .then((response) => {
+        if(response.data.message) {
+          navigate("/login", {replace: true})
+        } else {
+          setRentedMovies(response.data)
+        }
+      });
   }
 
   async function removeMovieHandler(removedMovieData) {

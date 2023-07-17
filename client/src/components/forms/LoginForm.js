@@ -12,26 +12,21 @@ const LoginForm = (props) => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    const logEmailError = document.getElementById("logEmailError")
-    const logPasswordError = document.getElementById("logPasswordError")
+    const loginError = document.getElementById("loginError")
 
     const userData = {
       email: enteredEmail,
       password: enteredPassword,
     };
 
-    const errors = {
-      emailError: logEmailError,
-      passwordError: logPasswordError
-    }
-
-    props.onLogin(userData, errors)
+    props.onLogin(userData, loginError)
 
   }
 
   return (
     <form className={classes.form} onSubmit={submitHandler}>
       <div className={classes.loginContainer}>
+      <p id="loginError" className={classes.error}></p>
         <div className={classes.input}>
           <label>Email</label>
           <input
@@ -40,9 +35,6 @@ const LoginForm = (props) => {
             ref={emailInputRef}
             required
           ></input>
-          <p id="logEmailError" className={classes.error}>
-            There is no user with this email! Try to Sign Up
-          </p>
         </div>
         <div className={classes.input}>
           <label>Password</label>
@@ -52,9 +44,6 @@ const LoginForm = (props) => {
             ref={passwordInputRef}
             required
           ></input>
-          <p id="logPasswordError" className={classes.error}>
-            The passwords do not match
-          </p>
         </div>
         <div className={classes.button}>
           <button>Sign in</button>
