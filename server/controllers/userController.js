@@ -2,9 +2,7 @@ const models = require("../models/userModel");
 
 // Get user controller
 const getUserDataCtrl = async (req, res) => {
-  const userEmail = req.params.email;
-  const userData = await models.getUser(userEmail);
-  res.send(userData);
+  res.send(req.user);
 };
 
 // Get user permission controller
@@ -34,13 +32,7 @@ const addUserCtrl = async (req, res) => {
 
   const result = await models.addUser(userData);
 
-  if (result === false) {
-    res.send("User with this email already exists!");
-  } else if (result === undefined) {
-    res.send("These are not valid credentials!");
-  } else {
-    res.send("User created successfully!");
-  }
+  res.send(result)
 };
 
 // Update user controller

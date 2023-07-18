@@ -6,23 +6,26 @@ const userRoutes = require("./routes/user");
 const app = express();
 const expressWinston = require("express-winston");
 const { transports, format } = require("winston");
+const { swaggerDocs } = require("./utils/swagger");
 
 app.use(express.json());
-app.use(expressWinston.logger({
-  transports: [
-    new transports.Console()
-  ],
-  format: format.combine(
-    format.json(),
-    format.timestamp(),
-    format.prettyPrint()
-  )
-}))
+app.use(
+  expressWinston.logger({
+    transports: [new transports.Console()],
+    format: format.combine(
+      format.json(),
+      format.timestamp(),
+      format.prettyPrint()
+    ),
+  })
+);
 
 app.use("/movies", movieRoutes);
 app.use("/rentedMovies", rentedMovieRoutes);
 app.use("/user", userRoutes);
+swaggerDocs(app, process.env.SERVER_PORT)
 
-app.listen(process.env.SERVER_PORT, () =>
-  console.log(`Server running on port ${process.env.SERVER_PORT}`)
+app.listen(
+  process.env.SERVER_PORT,
+  () => console.log(`Server running on port ${process.env.SERVER_PORT}`),
 );

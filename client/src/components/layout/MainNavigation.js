@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import classes from "./MainNavigation.module.css";
 import { useEffect, useState } from "react";
@@ -6,20 +6,31 @@ import axios from "axios";
 
 // Main navigation bar
 function MainNavigation() {
-  const [isAdmin, setIsAdmin] = useState();
+  const [currUser, setCurrUser] = useState({});
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
-  //   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  //   axios.get(`/user/perm/${currentUser.email}`).then((response) => {
-  //     if (response.data.Items[0].role === "admin") {
-  //       setIsAdmin(true)
-  //     }
-  //   }   
-  // )
-})
+    getUserData();
+  }, []);
+
+  const getUserData = () => {
+    axios
+      .get("/user", { headers: { Authorization: token } })
+      .then((response) => {
+        console.log(response.data);
+        setCurrUser(response.data);
+      }).catch(error => {
+        console.log(error);
+        localStorage.clear();
+        navigate("/login", {replace: true});
+      }
+
+      );
+  };
 
   function LogoutUser() {
-    localStorage.removeItem("currentUser");
+    localStorage.removeItem("token");
   }
 
   return (
@@ -40,7 +51,7 @@ function MainNavigation() {
               Logout
             </Link>
           </li>
-          {isAdmin && (
+          {currUser.role === "admin" && (
             <li>
               <Link to="/addMovies">Add movie</Link>
             </li>

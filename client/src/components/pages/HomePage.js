@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import AvailableMoviesList from "../lists/AvailableMoviesList";
 import classes from "./HomePage.module.css";
@@ -15,43 +16,36 @@ const HomePage = () => {
 
   function getMovies() {
     axios
-      .get("/movies", { headers: { Authorization: token } })
+      .get("/movies/", { headers: { Authorization: token } })
       .then((response) => {
-        // if (response.data.message) {
-        //   navigate("/login", { replace: true });
-        // }
         setAvailableMovies(response.data);
-      }).catch(error => navigate("login", {replace: true}));
+      })
+      .catch((error) => {
+        console.log(error);
+        localStorage.clear();
+        navigate("/login", { replace: true });
+      });
   }
 
-  // function rentMovieHandler(rentedMovieData) {
-  //   const currUserEmail = currUser.email;
-  //   rentedMovieData.renter = currUserEmail;
-
-  //   if (rentedMovieData.stock > 0) {
-  //     rentedMovieData.stock--;
-
-  //     axios
-  //       .put(`/movies/${rentedMovieData.name}`, rentedMovieData)
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-
-  //     axios
-  //       .post("/rentedmovies", rentedMovieData)
-  //       .then(getMovies())
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // }
+  function rentMovieHandler(rentedMovieData) {
+    axios
+      .post(
+        "/rentedMovies/",
+        { name: rentedMovieData.name },
+        {
+          headers: { Authorization: token },
+        }
+      )
+      .then(getMovies())
+      .catch((error) => console.log(error));
+  }
 
   return (
     <div className={classes.main}>
       <h2 className={classes.title}>Available Movies</h2>
       <AvailableMoviesList
         movies={availableMovies}
-        // onRentMovie={rentMovieHandler}
+        onRentMovie={rentMovieHandler}
       />
     </div>
   );

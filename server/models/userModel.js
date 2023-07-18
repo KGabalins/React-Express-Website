@@ -1,39 +1,3 @@
-// module.exports = {
-//   getUser : {
-//     TableName: "users",
-//     FilterExpression: "email = :email",
-//     ExpressionAttributeValues: { ":email": "none" },
-//   },
-//   postUser: {
-//     TableName: "users",
-//     Item: {
-//       name: "",
-//       surname: "",
-//       password: "",
-//       email: "",
-//       role: "",
-//     },
-//   },
-//   updateUser: {
-//     TableName: "users",
-//     Key: { email: "" },
-//     UpdateExpression: "SET #dataType = :dataValue",
-//     ExpressionAttributeNames: { "#dataType": "" },
-//     ExpressionAttributeValues: { ":dataValue": "" },
-//   },
-//   removeUser: {
-//     TableName: "users",
-//     Key: { email: "" },
-//   },
-//   postPerm: {
-//     TableName: "permissions",
-//     Item: {
-//       email: "",
-//       role: "",
-//     }
-//   }
-// };
-
 const dynamoClient = require("../database/dynamodb");
 const { updateMovieRenter } = require("./rentedMoviesModel");
 const jwt = require("jsonwebtoken");
@@ -63,7 +27,11 @@ const getPerm = async (userEmail) => {
 
 // Login user
 const loginUser = async ({ email, password }) => {
+  console.log("hello");
   const user = await getUser(email);
+  const perm = await getPerm(email);
+  user.role = perm.role;
+  console.log(user);
 
   if (!user) {
     return { auth: false, message: "User doesn't exist!" };
@@ -72,22 +40,35 @@ const loginUser = async ({ email, password }) => {
   }
 
   const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: 300,
+    expiresIn: 60,
   });
 
   return { auth: true, token, result: user };
 };
 
 // Add user to DB (also adds user permission *default is user)
-const addUser = async ({ name, surname, password, email }) => {
+const addUser = async ({
+  name,
+  surname,
+  password,
+  repassword,
+  email,
+  reemail,
+}) => {
   const userExists = await getUser(email);
 
   if (userExists) {
-    return false;
+    return {message : "User with this email already exists!"};
   }
 
-  if (name.length < 2 || !validateEmail(email) || password.length < 8) {
-    return undefined;
+  if (
+    name.length < 2 ||
+    !validateEmail(email) ||
+    password.length < 8 ||
+    email !== reemail ||
+    password !== repassword
+  ) {
+    return {message: "Bad credentials!"};
   }
 
   const params = {

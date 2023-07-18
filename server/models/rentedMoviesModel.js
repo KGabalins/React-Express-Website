@@ -1,24 +1,15 @@
 const pool = require("../database/postgresdb");
 const { updateMovieStock, getMovieByName } = require("./moviesModel");
-
-const getRenterMoviesQ =
-  "SELECT * FROM rentedmovies WHERE renter = $1 ORDER BY id";
-const getRentedMovieByIdQ =
-  "SELECT * FROM rentedmovies WHERE id = $1 ORDER BY id";
-const removeRentedMovieQ = "DELETE FROM rentedmovies WHERE id = $1";
-const rentMovieQ =
-  "INSERT INTO rentedmovies (name, genre, time, price, renter) VALUES ($1, $2, $3, $4, $5)";
-const updateMovieTimeQ = "UPDATE rentedmovies SET time = $1 WHERE id = $2";
-const updateMovieRenterQ = "UPDATE rentedmovies SET renter = $1 WHERE id = $2";
+const queries = require("../queries/rentedMovies")
 
 const getRenterMovies = async (renterEmail) => {
-  const result = (await pool.query(getRenterMoviesQ, [renterEmail])).rows;
+  const result = (await pool.query(queries.getRenterMovies, [renterEmail])).rows;
 
   return result;
 };
 
 const getRentedMovieById = async (id) => {
-  const result = (await pool.query(getRentedMovieByIdQ, [id])).rows[0];
+  const result = (await pool.query(queries.getRentedMovieById, [id])).rows[0];
 
   if (!result) {
     return false;
@@ -41,7 +32,7 @@ const rentMovie = async (movieName, userEmail) => {
 
   await updateMovieStock(movieName, updatedStock);
 
-  await pool.query(rentMovieQ, [name, genre, 12, price, userEmail]);
+  await pool.query(queries.rentMovie, [name, genre, 12, price, userEmail]);
 
   return { name, genre, time: 12, price, renter: userEmail };
 };
@@ -63,7 +54,7 @@ const editMovieTime = async (id, method) => {
     return undefined;
   }
 
-  await pool.query(updateMovieTimeQ, [time, id]);
+  await pool.query(queries.updateMovieTime, [time, id]);
   return await getRentedMovieById(id)
 };
 
@@ -75,20 +66,26 @@ const updateMovieRenter = async (userEmail, newEmail) => {
   }
 
   for (let i = 0; i < movies.length; i++) {
-    await pool.query(updateMovieRenterQ, [newEmail, movies[i].id]);
+    await pool.query(queries.updateMovieRenter, [newEmail, movies[i].id]);
   }
 
   return true;
 };
 
-const removeRentedMovie = async (id) => {
+const removeRentedMovie = async (id, email) => {
   const rentedMovie = await getRentedMovieById(id);
+
+  console.log(rentedMovie.renter, email)
 
   if (!rentedMovie) {
     return undefined;
+  } 
+  
+  if (rentedMovie.renter !== email) {
+    return false
   }
 
-  await pool.query(removeRentedMovieQ, [id]);
+  await pool.query(queries.removeRentedMovie, [id]);
 
   const movie = await getMovieByName(rentedMovie.name);
 

@@ -2,7 +2,6 @@ import classes from "./LoginPage.module.css";
 import { useRef } from "react";
 
 const LoginForm = (props) => {
-
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
 
@@ -12,21 +11,20 @@ const LoginForm = (props) => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    const loginError = document.getElementById("loginError")
+    const loginError = document.getElementById("loginError");
 
     const userData = {
       email: enteredEmail,
       password: enteredPassword,
     };
 
-    props.onLogin(userData, loginError)
-
+    props.onLogin(userData, loginError);
   }
 
   return (
     <form className={classes.form} onSubmit={submitHandler}>
       <div className={classes.loginContainer}>
-      <p id="loginError" className={classes.error}></p>
+        <p id="loginError" className={classes.error}></p>
         <div className={classes.input}>
           <label>Email</label>
           <input
@@ -51,6 +49,6 @@ const LoginForm = (props) => {
       </div>
     </form>
   );
-}
+};
 
 export default LoginForm;

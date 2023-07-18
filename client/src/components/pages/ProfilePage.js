@@ -1,11 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import classes from "./ProfilePage.module.css";
 import axios from "axios";
 
 const ProfilePage = () => {
-  const [currUser, setCurrUser] = useState(
-    JSON.parse(localStorage.getItem("currentUser"))
-  );
+  const [currUser, setCurrUser] = useState({});
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  const getUserData = () => {
+    axios
+      .get("/user", { headers: { Authorization: token } })
+      .then((response) => {
+        setCurrUser(response.data);
+      })
+      .catch((error) => console.log(error));
+  };
 
   const changeEmail = () => {
     const enteredEmail = prompt("Change email:");

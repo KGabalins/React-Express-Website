@@ -1,9 +1,13 @@
 const models = require("../models/rentedMoviesModel");
 
 const getRenterMoviesCtrl = async (req, res) => {
-  const renterEmail = req.params.email
+  const renterEmail = req.user.email
+
+  
+  console.log(renterEmail)
 
   const result = await models.getRenterMovies(renterEmail)
+
 
   res.status(200).send(result)
 };
@@ -21,8 +25,8 @@ const getRentedMovieCtrl = async (req, res) => {
 }
 
 const rentMovieCtrl = async (req, res) => {
-  const movieName = req.params.name
-  const userEmail = req.body.email
+  const movieName = req.body.name
+  const userEmail = req.user.email
 
   const result = await models.rentMovie(movieName, userEmail)
 
@@ -33,17 +37,6 @@ const rentMovieCtrl = async (req, res) => {
   } else {
     res.status(201).send(result)
   }
-
-
-  // const { name, genre, price, time, renter } = req.body;
-  // pool.query(
-  //   queries.rentMovie,
-  //   [name, genre, price, time, renter],
-  //   (error, results) => {
-  //     if (error) throw error;
-  //     res.status(201).send("Movie succesfuly rented!");
-  //   }
-  // );
 };
 
 const editMovieTimeCtrl = async (req, res) => {
@@ -59,30 +52,21 @@ const editMovieTimeCtrl = async (req, res) => {
   } else {
     res.status(201).send(result)
   }
-  // const rentedMovieId = req.params.id
-  // const time = req.body.time
-  // pool.query(queries.editMovieTime, [time, rentedMovieId], (error, results) => {
-  //   if (error) throw error;
-  //   res.status(201).send("Time changed!");
-  // })
 };
 
 const removeRentedMovieCtrl = async (req, res) => {
   const rentedMovieId = req.params.id
+  const userEmail = req.user.email
 
-  const result = await models.removeRentedMovie(rentedMovieId)
+  const result = await models.removeRentedMovie(rentedMovieId, userEmail)
 
   if(result === undefined) {
     res.send("There is no movie with this ID!")
+  } else if (result === false) {
+    res.send("You are not the renter of this movie!")
   } else {
     res.status(200).send(result)
   }
-
-  // const rentedMovieId = req.params.id;
-  // pool.query(queries.removeRentedMovie, [rentedMovieId], (error, results) => {
-  //   if (error) res.send(error);
-  //   res.send(results.rows);
-  // });
 };
 
 module.exports = {

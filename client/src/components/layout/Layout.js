@@ -11,6 +11,6 @@ const Layout = () => {
       <Footer />
     </>
   );
-}
+};
 
 export default Layout;

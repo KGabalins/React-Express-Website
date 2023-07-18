@@ -1,22 +1,14 @@
 const pool = require("../database/postgresdb");
-
-const getAllMoviesQ = "SELECT * FROM movies ORDER BY id";
-const getMovieByNameQ = "SELECT * FROM movies WHERE name = $1";
-const updateMovieStockQ = "UPDATE movies SET stock = $1 WHERE name = $2";
-const postMovieQ =
-  "INSERT INTO movies (name, genre, price, stock) VALUES ($1, $2, $3, $4)";
-const deleteMovieQ = "DELETE FROM movies where name = $1";
+const queries = require("../queries/movies")
 
 // Get all movies from DB
 const getMovies = async () => {
-
-  return (await pool.query(getAllMoviesQ)).rows;
+  return (await pool.query(queries.getAllMovies)).rows;
 }
 
 // Get a specific movie from DB
 const getMovieByName = async (movieName) => {
-
-  return (await pool.query(getMovieByNameQ, [movieName])).rows[0]
+  return (await pool.query(queries.getMovieByName, [movieName])).rows[0]
 }
 
 // Add a movie to the DB
@@ -27,7 +19,7 @@ const addMovie = async ({name, genre, price, stock}) => {
     return false
   }
 
-  await pool.query(postMovieQ, [name, genre, price, stock])
+  await pool.query(queries.postMovie, [name, genre, price, stock])
 
   return {name, genre, price, stock}
 }
@@ -38,7 +30,7 @@ const deleteMovie = async (movieName) => {
 
   console.log(movieExists)
 
-  await pool.query(deleteMovieQ, [movieName])
+  await pool.query(queries.deleteMovie, [movieName])
   return movieExists
 }
 
@@ -50,7 +42,7 @@ const updateMovieStock = async (movieName, stock) => {
     return false
   }
 
-  await pool.query(updateMovieStockQ, [stock, movieName])
+  await pool.query(queries.updateMovieStock, [stock, movieName])
   return await getMovieByName(movieName)
 }
 
